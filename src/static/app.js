@@ -4,6 +4,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
 
+  // Define custom element for participants
+  class ParticipantInfo extends HTMLElement {
+    set participants(participants) {
+      this.innerHTML = `
+        <p><strong>Participants:</strong></p>
+        <ul>
+          ${participants.map(participant => `<li>${participant}</li>`).join("")}
+        </ul>
+      `;
+    }
+  }
+
+  customElements.define("participant-info", ParticipantInfo);
+
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
@@ -25,11 +39,11 @@ document.addEventListener("DOMContentLoaded", () => {
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-          <p><strong>Participants:</strong></p>
-          <ul>
-            ${details.participants.map(participant => `<li>${participant}</li>`).join("")}
-          </ul>
         `;
+
+        const participantInfo = document.createElement("participant-info");
+        participantInfo.participants = details.participants;
+        activityCard.appendChild(participantInfo);
 
         activitiesList.appendChild(activityCard);
 
